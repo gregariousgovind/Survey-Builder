@@ -133,7 +133,7 @@ export interface FileUploadQuestion extends BaseQuestion {
 /**
  * Type alias for all question types.
  */
-type Question = MultipleChoiceQuestion | SingleChoiceQuestion | TextQuestion | RatingQuestion | CheckboxQuestion | DateQuestion | NumberQuestion | TextareaQuestion | DropdownQuestion | FileUploadQuestion;
+export type Question = MultipleChoiceQuestion | SingleChoiceQuestion | TextQuestion | RatingQuestion | CheckboxQuestion | DateQuestion | NumberQuestion | TextareaQuestion | DropdownQuestion | FileUploadQuestion;
 
 /**
  * Interface for the survey structure.

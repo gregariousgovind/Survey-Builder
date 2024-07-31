@@ -1,1 +1,108 @@
-Survey App
+<form [formGroup]="surveyForm" (ngSubmit)="onSubmit()">
+    <div *ngFor="let question of survey.questions">
+        <div [ngSwitch]="question.type">
+            <div *ngSwitchCase="questionType.SingleChoice">
+                <label>{{ question.text }}</label>
+                <div *ngFor="let option of (question as SingleChoiceQuestion).options">
+                    <input type="radio" [formControlName]="question.id" [value]="option" /> {{ option }}
+                </div>
+            </div>
+            <div *ngSwitchCase="questionType.MultipleChoice">
+                <label>{{ question.text }}</label>
+                <div *ngFor="let option of (question as MultipleChoiceQuestion).options; let i = index">
+                    <input type="checkbox" [formControlName]="question.id" [formArrayName]="i" /> {{ option }}
+                </div>
+            </div>
+            <div *ngSwitchCase="questionType.Text">
+                <label>{{ question.text }}</label>
+                <input type="text" [formControlName]="question.id" [placeholder]="(question as TextQuestion).placeholder" />
+            </div>
+            <div *ngSwitchCase="questionType.Rating">
+                <label>{{ question.text }}</label>
+                <input type="number" [formControlName]="question.id" [min]="1" [max]="(question as RatingQuestion).scale" />
+            </div>
+            <div *ngSwitchCase="questionType.Checkbox">
+                <label>{{ question.text }}</label>
+                <input type="checkbox" [formControlName]="question.id" />
+            </div>
+            <div *ngSwitchCase="questionType.Date">
+                <label>{{ question.text }}</label>
+                <input type="date" [formControlName]="question.id" />
+            </div>
+            <div *ngSwitchCase="questionType.Number">
+                <label>{{ question.text }}</label>
+                <input type="number" [formControlName]="question.id" [placeholder]="(question as NumberQuestion).placeholder" />
+            </div>
+            <div *ngSwitchCase="questionType.Textarea">
+                <label>{{ question.text }}</label>
+                <textarea [formControlName]="question.id" [rows]="(question as TextareaQuestion).rows" [placeholder]="(question as TextareaQuestion).placeholder"></textarea>
+            </div>
+            <div *ngSwitchCase="questionType.Dropdown">
+                <label>{{ question.text }}</label>
+                <select [formControlName]="question.id" [multiple]="(question as DropdownQuestion).multiple">
+                    <option *ngFor="let option of (question as DropdownQuestion).options" [value]="option">{{ option }}</option>
+                </select>
+            </div>
+            <div *ngSwitchCase="questionType.FileUpload">
+                <label>{{ question.text }}</label>
+                <input type="file" [formControlName]="question.id" />
+            </div>
+        </div>
+        <div *ngIf="question.helpText">{{ question.helpText }}</div>
+    </div>
+    <button type="submit" [disabled]="!surveyForm.valid">Submit</button>
+</form>
+<form [formGroup]="surveyForm" (ngSubmit)="onSubmit()">
+    <div *ngFor="let question of survey.questions">
+        <div [ngSwitch]="question.type">
+            <div *ngSwitchCase="questionType.SingleChoice">
+                <label>{{ question.text }}</label>
+                <div *ngFor="let option of getOptions(question)">
+                    <input type="radio" [formControlName]="question.id" [value]="option" /> {{ option }}
+                </div>
+            </div>
+            <div *ngSwitchCase="questionType.MultipleChoice">
+                <label>{{ question.text }}</label>
+                <div *ngFor="let option of getOptions(question); let i = index">
+                    <input type="checkbox" [formControlName]="question.id" [formArrayName]="i" /> {{ option }}
+                </div>
+            </div>
+            <div *ngSwitchCase="questionType.Text">
+                <label>{{ question.text }}</label>
+                <input type="text" [formControlName]="question.id" [placeholder]="getPlaceholder(question)" />
+            </div>
+            <div *ngSwitchCase="questionType.Rating">
+                <label>{{ question.text }}</label>
+                <input type="number" [formControlName]="question.id" [min]="1" [max]="getScale(question)" />
+            </div>
+            <div *ngSwitchCase="questionType.Checkbox">
+                <label>{{ question.text }}</label>
+                <input type="checkbox" [formControlName]="question.id" />
+            </div>
+            <div *ngSwitchCase="questionType.Date">
+                <label>{{ question.text }}</label>
+                <input type="date" [formControlName]="question.id" />
+            </div>
+            <div *ngSwitchCase="questionType.Number">
+                <label>{{ question.text }}</label>
+                <input type="number" [formControlName]="question.id" [placeholder]="getPlaceholder(question)" />
+            </div>
+            <div *ngSwitchCase="questionType.Textarea">
+                <label>{{ question.text }}</label>
+                <textarea [formControlName]="question.id" [rows]="getRows(question)" [placeholder]="getPlaceholder(question)"></textarea>
+            </div>
+            <div *ngSwitchCase="questionType.Dropdown">
+                <label>{{ question.text }}</label>
+                <select [formControlName]="question.id" [multiple]="getMultiple(question)">
+                    <option *ngFor="let option of getOptions(question)" [value]="option">{{ option }}</option>
+                </select>
+            </div>
+            <div *ngSwitchCase="questionType.FileUpload">
+                <label>{{ question.text }}</label>
+                <input type="file" [formControlName]="question.id" />
+            </div>
+        </div>
+        <div *ngIf="question.helpText">{{ question.helpText }}</div>
+    </div>
+    <button type="submit" [disabled]="!surveyForm.valid">Submit</button>
+</form>
