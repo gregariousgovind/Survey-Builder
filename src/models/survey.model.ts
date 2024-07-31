@@ -11,12 +11,6 @@ export enum QuestionType {
   FileUpload = 'FileUpload'
 }
 
-export interface ConditionalLogic {
-  questionId: string;
-  value: any;
-  action: 'show' | 'hide';
-}
-
 export interface Validation {
   required?: boolean;
   minLength?: number;
@@ -28,6 +22,12 @@ export interface Validation {
   maxDate?: string;
   acceptedFileTypes?: string[];
   maxSizeMB?: number;
+}
+
+export interface ConditionalLogic {
+  questionId: string;
+  value: any;
+  action: 'show' | 'hide';
 }
 
 export interface BaseQuestion {
@@ -98,17 +98,7 @@ export interface FileUploadQuestion extends BaseQuestion {
   maxSizeMB: number;
 }
 
-export type Question =
-  | MultipleChoiceQuestion
-  | SingleChoiceQuestion
-  | TextQuestion
-  | RatingQuestion
-  | CheckboxQuestion
-  | DateQuestion
-  | NumberQuestion
-  | TextareaQuestion
-  | DropdownQuestion
-  | FileUploadQuestion;
+export type Question = MultipleChoiceQuestion | SingleChoiceQuestion | TextQuestion | RatingQuestion | CheckboxQuestion | DateQuestion | NumberQuestion | TextareaQuestion | DropdownQuestion | FileUploadQuestion;
 
 export interface Survey {
   id: string;
@@ -121,16 +111,4 @@ export interface Survey {
   status: 'Draft' | 'Published' | 'Archived';
   version: number;
   questions: Question[];
-}
-
-export interface Response {
-  surveyId: string;
-  respondentId: string;
-  responseTime: string;
-  answers: Answer[];
-}
-
-export interface Answer {
-  questionId: string;
-  value: any;
 }

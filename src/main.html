@@ -1,109 +1,96 @@
-<div class="survey-form-container">
-  <h2>{{ survey.title }}</h2>
-  <p>{{ survey.description }}</p>
+<div>
+  <h1>{{ surveyData.title }}</h1>
+  <p>{{ surveyData.description }}</p>
   <form [formGroup]="surveyForm" (ngSubmit)="onSubmit()">
-    <div *ngFor="let question of responses.controls; let i = index" [formGroupName]="i">
-      <div *ngIf="question.get('type')?.value === 'Text'" class="input-container text">
-        <input class="input-text" [placeholder]="question.get('text')?.value" formControlName="response">
-        <label>{{ question.get('text')?.value }}</label>
-        <div *ngIf="question.invalid && (question.dirty || question.touched)" class="error">
-          <div *ngIf="question.errors?.['required']">This field is required.</div>
-          <div *ngIf="question.errors?.['minlength']">Minimum length is {{ question.errors?.['minlength']?.requiredLength }} characters.</div>
-          <div *ngIf="question.errors?.['maxlength']">Maximum length is {{ question.errors?.['maxlength']?.requiredLength }} characters.</div>
-        </div>
-      </div>
-
-      <div *ngIf="question.get('type')?.value === 'Textarea'" class="input-container textarea">
-        <textarea class="input-textarea" [rows]="question.get('rows')?.value" [placeholder]="question.get('text')?.value" formControlName="response"></textarea>
-        <label>{{ question.get('text')?.value }}</label>
-        <div *ngIf="question.invalid && (question.dirty || question.touched)" class="error">
-          <div *ngIf="question.errors?.['required']">This field is required.</div>
-          <div *ngIf="question.errors?.['maxlength']">Maximum length is {{ question.errors?.['maxlength']?.requiredLength }} characters.</div>
-        </div>
-      </div>
-
-      <div *ngIf="question.get('type')?.value === 'SingleChoice'" class="input-container single-choice">
-        <label>{{ question.get('text')?.value }}</label>
-        <div *ngFor="let option of question.get('options')?.value">
-          <input type="radio" [value]="option" formControlName="response">{{ option }}
-        </div>
-        <div *ngIf="question.invalid && (question.dirty || question.touched)" class="error">
-          <div *ngIf="question.errors?.['required']">This field is required.</div>
-        </div>
-      </div>
-
-      <div *ngIf="question.get('type')?.value === 'MultipleChoice'" class="input-container multiple-choice">
-        <label>{{ question.get('text')?.value }}</label>
-        <div *ngFor="let option of question.get('options')?.value">
-          <input type="checkbox" (change)="onCheckboxChange($event, i, option)">{{ option }}
-        </div>
-        <div *ngIf="question.invalid && (question.dirty || question.touched)" class="error">
-          <div *ngIf="question.errors?.['required']">This field is required.</div>
-          <div *ngIf="question.errors?.['minlength']">At least {{ question.errors?.['minlength']?.requiredLength }} option(s) must be selected.</div>
-        </div>
-      </div>
-
-      <div *ngIf="question.get('type')?.value === 'Rating'" class="input-container rating">
-        <label>{{ question.get('text')?.value }}</label>
-        <div class="rating-input">
-          <div *ngFor="let star of [].constructor(question.get('scale')?.value); let j = index" class="star" (click)="setRating(i, j+1)">
-            &#9733;
+    <div formArrayName="questions">
+      <div *ngFor="let question of surveyData.questions; let i = index" [formGroupName]="i">
+        <ng-container [ngSwitch]="question.type">
+          <div *ngSwitchCase="QuestionType.SingleChoice">
+            <label>{{ question.text }}</label>
+            <div *ngFor="let option of (question as SingleChoiceQuestion).options">
+              <input type="radio" [formControlName]="question.id" [value]="option" />
+              {{ option }}
+            </div>
+            <div *ngIf="question.helpText">{{ question.helpText }}</div>
+            <div *ngIf="surveyForm.get(['questions', i, question.id])?.invalid && surveyForm.get(['questions', i, question.id])?.touched">
+              This field is required.
+            </div>
           </div>
-        </div>
-        <div *ngIf="question.invalid && (question.dirty || question.touched)" class="error">
-          <div *ngIf="question.errors?.['required']">This field is required.</div>
-        </div>
-      </div>
-
-      <div *ngIf="question.get('type')?.value === 'Checkbox'" class="input-container checkbox">
-        <label>{{ question.get('text')?.value }}</label>
-        <input type="checkbox" formControlName="response">
-        <div *ngIf="question.invalid && (question.dirty || question.touched)" class="error">
-          <div *ngIf="question.errors?.['required']">This field is required.</div>
-        </div>
-      </div>
-
-      <div *ngIf="question.get('type')?.value === 'Date'" class="input-container date">
-        <label>{{ question.get('text')?.value }}</label>
-        <input type="date" formControlName="response" [min]="question.get('minDate')?.value" [max]="question.get('maxDate')?.value">
-        <div *ngIf="question.invalid && (question.dirty || question.touched)" class="error">
-          <div *ngIf="question.errors?.['required']">This field is required.</div>
-          <div *ngIf="question.errors?.['min']">Date must be after {{ question.get('minDate')?.value }}</div>
-          <div *ngIf="question.errors?.['max']">Date must be before {{ question.get('maxDate')?.value }}</div>
-        </div>
-      </div>
-
-      <div *ngIf="question.get('type')?.value === 'Number'" class="input-container number">
-        <label>{{ question.get('text')?.value }}</label>
-        <input type="number" formControlName="response" [min]="question.get('minValue')?.value" [max]="question.get('maxValue')?.value" [placeholder]="question.get('placeholder')?.value">
-        <div *ngIf="question.invalid && (question.dirty || question.touched)" class="error">
-          <div *ngIf="question.errors?.['required']">This field is required.</div>
-          <div *ngIf="question.errors?.['min']">Minimum value is {{ question.errors?.['min']?.min }}</div>
-          <div *ngIf="question.errors?.['max']">Maximum value is {{ question.errors?.['max']?.max }}</div>
-        </div>
-      </div>
-
-      <div *ngIf="question.get('type')?.value === 'Dropdown'" class="input-container dropdown">
-        <label>{{ question.get('text')?.value }}</label>
-        <select formControlName="response" [multiple]="question.get('multiple')?.value">
-          <option *ngFor="let option of question.get('options')?.value" [value]="option">{{ option }}</option>
-        </select>
-        <div *ngIf="question.invalid && (question.dirty || question.touched)" class="error">
-          <div *ngIf="question.errors?.['required']">This field is required.</div>
-          <div *ngIf="question.errors?.['minlength']">At least {{ question.errors?.['minlength']?.requiredLength }} option(s) must be selected.</div>
-        </div>
-      </div>
-
-      <div *ngIf="question.get('type')?.value === 'FileUpload'" class="input-container file-upload">
-        <label>{{ question.get('text')?.value }}</label>
-        <input type="file" formControlName="response" [accept]="question.get('acceptedFileTypes')?.value.join(', ')" (change)="onFileChange($event, i)">
-        <div *ngIf="question.invalid && (question.dirty || question.touched)" class="error">
-          <div *ngIf="question.errors?.['required']">This field is required.</div>
-          <div *ngIf="question.errors?.['maxSize']">Maximum file size is {{ question.errors?.['maxSize']?.maxSizeMB }} MB.</div>
-          <div *ngIf="question.errors?.['acceptedFileTypes']">Accepted file types are: {{ question.get('acceptedFileTypes')?.value.join(', ') }}</div>
-        </div>
+          <div *ngSwitchCase="QuestionType.MultipleChoice">
+            <label>{{ question.text }}</label>
+            <div *ngFor="let option of (question as MultipleChoiceQuestion).options">
+              <input type="checkbox" [formControlName]="option" /> {{ option }}
+            </div>
+            <div *ngIf="question.helpText">{{ question.helpText }}</div>
+          </div>
+          <div *ngSwitchCase="QuestionType.Text">
+            <label>{{ question.text }}</label>
+            <input type="text" [formControlName]="question.id" [placeholder]="(question as TextQuestion).placeholder" />
+            <div *ngIf="question.helpText">{{ question.helpText }}</div>
+            <div *ngIf="surveyForm.get(['questions', i, question.id])?.invalid && surveyForm.get(['questions', i, question.id])?.touched">
+              <div *ngIf="surveyForm.get(['questions', i, question.id])?.hasError('required')">This field is required.</div>
+              <div *ngIf="surveyForm.get(['questions', i, question.id])?.hasError('maxlength')">Maximum length exceeded.</div>
+            </div>
+          </div>
+          <div *ngSwitchCase="QuestionType.Rating">
+            <label>{{ question.text }}</label>
+            <input type="number" [formControlName]="question.id" min="1" [max]="(question as RatingQuestion).scale" />
+            <div *ngIf="question.helpText">{{ question.helpText }}</div>
+            <div *ngIf="surveyForm.get(['questions', i, question.id])?.invalid && surveyForm.get(['questions', i, question.id])?.touched">
+              This field is required.
+            </div>
+          </div>
+          <div *ngSwitchCase="QuestionType.Checkbox">
+            <label>
+              <input type="checkbox" [formControlName]="question.id" /> {{ question.text }}
+            </label>
+            <div *ngIf="question.helpText">{{ question.helpText }}</div>
+          </div>
+          <div *ngSwitchCase="QuestionType.Date">
+            <label>{{ question.text }}</label>
+            <input type="date" [formControlName]="question.id" [min]="question.validation?.minDate" [max]="question.validation?.maxDate" />
+            <div *ngIf="question.helpText">{{ question.helpText }}</div>
+            <div *ngIf="surveyForm.get(['questions', i, question.id])?.invalid && surveyForm.get(['questions', i, question.id])?.touched">
+              This field is required.
+            </div>
+          </div>
+          <div *ngSwitchCase="QuestionType.Number">
+            <label>{{ question.text }}</label>
+            <input type="number" [formControlName]="question.id" [min]="question.validation?.minValue" [max]="question.validation?.maxValue" [placeholder]="(question as NumberQuestion).placeholder" />
+            <div *ngIf="question.helpText">{{ question.helpText }}</div>
+            <div *ngIf="surveyForm.get(['questions', i, question.id])?.invalid && surveyForm.get(['questions', i, question.id])?.touched">
+              <div *ngIf="surveyForm.get(['questions', i, question.id])?.hasError('required')">This field is required.</div>
+              <div *ngIf="surveyForm.get(['questions', i, question.id])?.hasError('min')">Minimum value is {{ question.validation?.minValue }}.</div>
+              <div *ngIf="surveyForm.get(['questions', i, question.id])?.hasError('max')">Maximum value is {{ question.validation?.maxValue }}.</div>
+            </div>
+          </div>
+          <div *ngSwitchCase="QuestionType.Textarea">
+            <label>{{ question.text }}</label>
+            <textarea [formControlName]="question.id" [placeholder]="(question as TextareaQuestion).placeholder" [rows]="(question as TextareaQuestion).rows"></textarea>
+            <div *ngIf="question.helpText">{{ question.helpText }}</div>
+            <div *ngIf="surveyForm.get(['questions', i, question.id])?.invalid && surveyForm.get(['questions', i, question.id])?.touched">
+              <div *ngIf="surveyForm.get(['questions', i, question.id])?.hasError('required')">This field is required.</div>
+              <div *ngIf="surveyForm.get(['questions', i, question.id])?.hasError('maxlength')">Maximum length exceeded.</div>
+            </div>
+          </div>
+          <div *ngSwitchCase="QuestionType.Dropdown">
+            <label>{{ question.text }}</label>
+            <select [formControlName]="question.id" [multiple]="(question as DropdownQuestion).multiple">
+              <option *ngFor="let option of (question as DropdownQuestion).options" [value]="option">{{ option }}</option>
+            </select>
+            <div *ngIf="question.helpText">{{ question.helpText }}</div>
+            <div *ngIf="surveyForm.get(['questions', i, question.id])?.invalid && surveyForm.get(['questions', i, question.id])?.touched">
+              This field is required.
+            </div>
+          </div>
+          <div *ngSwitchCase="QuestionType.FileUpload">
+            <label>{{ question.text }}</label>
+            <input type="file" [formControlName]="question.id" [accept]="question.validation?.acceptedFileTypes?.join(', ')" />
+            <div *ngIf="question.helpText">{{ question.helpText }}</div>
+          </div>
+        </ng-container>
       </div>
     </div>
-    <button type="submit" [disabled]="surveyForm.invalid">Submit</button>
+    <button type="submit">Submit</button>
   </form>
 </div>
