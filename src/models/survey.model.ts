@@ -5,8 +5,8 @@ export interface Validation {
     minValue?: number; // Minimum value for number input fields
     maxValue?: number; // Maximum value for number input fields
     pattern?: string; // Regex pattern for text input fields
-    minDate?: string; // Minimum date for date input fields in YYYY-MM-DD format
-    maxDate?: string; // Maximum date for date input fields in YYYY-MM-DD format
+    minDate?: number; // Minimum date for date input fields
+    maxDate?: number; // Maximum date for date input fields
     acceptedFileTypes?: string[]; // Accepted file types for file upload input fields
     maxSizeMB?: number; // Maximum file size in megabytes for file upload input fields
 }
@@ -143,9 +143,9 @@ export interface Survey {
     title: string; // Title of the survey
     description: string; // Description of the survey
     createdBy: string; // User who created the survey
-    createdDate: string; // Date when the survey was created
-    modifiedBy: string; // User who last modified the survey
-    modifiedDate: string; // Date when the survey was last modified
+    createdDate: number; // Date when the survey was created
+    modifiedBy: string[]; // User who modified the survey
+    modifiedDate: number; // Date when the survey was last modified
     status: 'Draft' | 'Published' | 'Archived'; // Status of the survey
     version: number; // Version number of the survey
     questions: Question[]; // List of questions in the survey
