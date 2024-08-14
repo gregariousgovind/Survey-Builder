@@ -1,73 +1,81 @@
-<form [formGroup]="surveyForm" (ngSubmit)="submit()">
-  <div *ngFor="let config of survey.questions; let i = index">
-    <!-- Text Question -->
-    <div class="input-container text" [formGroup]="getFormGroup(i)" *ngIf="config.type === 'Text'">
-      <input class="input-text" id="{{config.id}}" type="text" formControlName="value" [required]="config.required" placeholder=" ">
-      <label for="{{config.id}}">{{ config.text }}</label>
-    </div>
-
-    <!-- Textarea Question -->
-    <div class="input-container textarea" [formGroup]="getFormGroup(i)" *ngIf="config.type === 'Textarea'">
-      <textarea class="input-textarea" id="{{config.id}}" formControlName="value" [required]="config.required" placeholder=" " [rows]="config.rows"></textarea>
-      <label for="{{config.id}}">{{ config.text }}</label>
-    </div>
-
-    <!-- Number Question -->
-    <div class="input-container numeric" [formGroup]="getFormGroup(i)" *ngIf="config.type === 'Number'">
-      <input class="input-numeric" id="{{config.id}}" type="number" formControlName="value" placeholder=" ">
-      <label for="{{config.id}}">{{ config.text }}</label>
-    </div>
-    
-    <!-- Date Question -->
-    <div class="input-container text" [formGroup]="getFormGroup(i)" *ngIf="config.type === 'Date'">
-      <input class="input-text" id="{{config.id}}" type="date" formControlName="value" [min]="config.minDate" [max]="config.maxDate" placeholder=" ">
-      <label for="{{config.id}}">{{ config.text }}</label>
-    </div>
-
-    <!-- Checkbox Question -->
-    <div class="input-container checkbox" [formGroup]="getFormGroup(i)" *ngIf="config.type === 'Checkbox'">
-      <label>
-        <input id="{{config.id}}" type="checkbox" formControlName="value">{{ config.text }}
-      </label>
-    </div>
-
-    <!-- Dropdown Question -->
-    <div class="input-container select" [ngClass]="{multiple: config.multiple}" [formGroup]="getFormGroup(i)" *ngIf="config.type === 'Dropdown'">
-      <select class="input-select" id="{{config.id}}" formControlName="value" [multiple]="config.multiple">
-        <option *ngFor="let option of config.options" [value]="option">{{ option }}</option>
-      </select>
-      <label for="{{config.id}}">{{ config.text }}</label>
-    </div>
-
-    <!-- Single Choice Question -->
-    <div class="input-container options field" [formGroup]="getFormGroup(i)" *ngIf="config.type === 'SingleChoice'">
-      <label>{{ config.text }}</label>
-      <label class="option" *ngFor="let option of config.options">
-        <input type="radio" [value]="option" formControlName="value">{{ option }}
-      </label>
-    </div>
-
-    <!-- Multiple Choice Question -->
-    <div class="input-container options field" [formGroup]="getFormGroup(i)" *ngIf="config.type === 'MultipleChoice'">
-      <label>{{ config.text }}</label>
-      <label class="option" *ngFor="let option of config.options">
-        <input type="checkbox" [value]="option" formControlName="value">{{ option }}
-      </label>
-    </div>
-
-    <!-- Rating Question -->
-    <div [formGroup]="getFormGroup(i)" *ngIf="config.type === 'Rating'">
-      <label id="rating-text">{{ config.text }}</label>
-      <div id="star-rating">
-        <span *ngFor="let rating of [].constructor(config.scale)" class="star" [attr.data-value]="rating + 1">&#9733;</span>
-      </div>
-    </div>
-    
-    <!-- File Upload Question -->
-    <div class="input-container text" [formGroup]="getFormGroup(i)" *ngIf="config.type === 'FileUpload'">
-      <input class="input-text" type="file" id="{{config.id}}" formControlName="value" (change)="onFileChange($event, i)">
-      <label for="{{config.id}}">{{ config.text }}</label>
-    </div>
+<div class="survey-container">
+  <div class="survey-header">
+    <h2>{{ survey?.title }}</h2>
+    <p>{{ survey?.description }}</p>
   </div>
-  <button type="submit">Submit</button>
-</form>
+  <form [formGroup]="surveyForm" (ngSubmit)="submit()">
+    <ng-container *ngFor="let config of survey.questions; let i = index">
+      <!-- Text Question -->
+      <div class="input-container text" [formGroup]="getFormGroup(i)" *ngIf="config.type === 'Text'">
+        <input class="input-text" id="{{config.id}}" type="text" formControlName="value" [required]="config.required" placeholder=" ">
+        <label for="{{config.id}}">{{ config.text }}</label>
+      </div>
+
+      <!-- Textarea Question -->
+      <div class="input-container textarea" [formGroup]="getFormGroup(i)" *ngIf="config.type === 'Textarea'">
+        <textarea class="input-textarea" id="{{config.id}}" formControlName="value" [required]="config.required" placeholder=" " [rows]="config.rows"></textarea>
+        <label for="{{config.id}}">{{ config.text }}</label>
+      </div>
+
+      <!-- Number Question -->
+      <div class="input-container numeric" [formGroup]="getFormGroup(i)" *ngIf="config.type === 'Number'">
+        <input class="input-numeric" id="{{config.id}}" type="number" formControlName="value" placeholder=" ">
+        <label for="{{config.id}}">{{ config.text }}</label>
+      </div>
+      
+      <!-- Date Question -->
+      <div class="input-container text" [formGroup]="getFormGroup(i)" *ngIf="config.type === 'Date'">
+        <input class="input-text" id="{{config.id}}" type="date" formControlName="value" [min]="config.minDate" [max]="config.maxDate" placeholder=" ">
+        <label for="{{config.id}}">{{ config.text }}</label>
+      </div>
+
+      <!-- Checkbox Question -->
+      <div class="input-container checkbox" [formGroup]="getFormGroup(i)" *ngIf="config.type === 'Checkbox'">
+        <label>
+          <input id="{{config.id}}" type="checkbox" formControlName="value">{{ config.text }}
+        </label>
+      </div>
+
+      <!-- Dropdown Question -->
+      <div class="input-container select" [ngClass]="{multiple: config.multiple}" [formGroup]="getFormGroup(i)" *ngIf="config.type === 'Dropdown'">
+        <select class="input-select" id="{{config.id}}" formControlName="value" [multiple]="config.multiple">
+          <option *ngFor="let option of config.options" [value]="option">{{ option }}</option>
+        </select>
+        <label for="{{config.id}}">{{ config.text }}</label>
+      </div>
+
+      <!-- Single Choice Question -->
+      <div class="input-container options field" [formGroup]="getFormGroup(i)" *ngIf="config.type === 'SingleChoice'">
+        <label>{{ config.text }}</label>
+        <label class="option" *ngFor="let option of config.options">
+          <input type="radio" [value]="option" formControlName="value">{{ option }}
+        </label>
+      </div>
+
+      <!-- Multiple Choice Question -->
+      <div class="input-container options field" [formGroup]="getFormGroup(i)" *ngIf="config.type === 'MultipleChoice'">
+        <label>{{ config.text }}</label>
+        <label class="option" *ngFor="let option of config.options">
+          <input type="checkbox" [value]="option" formControlName="value">{{ option }}
+        </label>
+      </div>
+
+      <!-- Rating Question -->
+      <div [formGroup]="getFormGroup(i)" *ngIf="config.type === 'Rating'">
+        <label id="rating-text">{{ config.text }}</label>
+        <div id="star-rating">
+          <span *ngFor="let rating of [].constructor(config.scale)" class="star" [attr.data-value]="rating + 1">&#9733;</span>
+        </div>
+      </div>
+      
+      <!-- File Upload Question -->
+      <div class="input-container text" [formGroup]="getFormGroup(i)" *ngIf="config.type === 'FileUpload'">
+        <input class="input-text" type="file" id="{{config.id}}" formControlName="value" (change)="onFileChange($event, i)">
+        <label for="{{config.id}}">{{ config.text }}</label>
+      </div>
+    </ng-container>
+    <div class="survey-footer">
+      <button type="submit">Send Response</button>
+    </div>
+  </form>
+</div>
